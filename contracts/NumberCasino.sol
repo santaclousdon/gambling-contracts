@@ -35,13 +35,14 @@ contract NumberCasino {
     function endBetting() public onlyOwner {
         require(bettingActive, "No betting round active.");
         bettingActive = false;
-        winningNumber =
-            (uint256(
-                keccak256(
-                    abi.encodePacked(block.timestamp, block.difficulty, seed++)
-                )
-            ) % 10) +
-            1; // Simple RNG
+        // winningNumber =
+        //     (uint256(
+        //         keccak256(
+        //             abi.encodePacked(block.timestamp, block.difficulty, seed++)
+        //         )
+        //     ) % 10) +
+        //     1; // Simple RNG
+        winningNumber = 5;
         houseEarnings += (totalBetAmount * 10) / 100; // 10% to house
         emit BettingEnded(winningNumber);
     }

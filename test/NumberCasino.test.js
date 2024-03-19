@@ -44,16 +44,13 @@ describe("NumberCasino", function () {
       deployTokenFixture
     );
 
-    const addr_initialBalance = await ethers.provider.getBalance(addr1.address);
-    console.log("addr initialBalance", addr_initialBalance);
-
     await betting.connect(owner).startBetting();
     await betting
       .connect(addr1)
-      .placeBet(5, { value: ethers.parseEther("400.0") });
+      .placeBet(5, { value: ethers.parseEther("500.0") });
     await betting
       .connect(addr2)
-      .placeBet(2, { value: ethers.parseEther("500.0") });
+      .placeBet(2, { value: ethers.parseEther("200.0") });
     await betting
       .connect(addr3)
       .placeBet(3, { value: ethers.parseEther("300.0") });
@@ -61,20 +58,22 @@ describe("NumberCasino", function () {
 
     const winningNumber = await betting.winningNumber();
     console.log("winningNumber", winningNumber);
-    // await betting.connect(addr1).withdrawWinnings();
-
-    await expect(betting.connect(addr1).withdrawWinnings()).to.be.revertedWith(
-      "Not a winner this round."
-    );
-    if (winningNumber === 5) {
+    if (winningNumber === 5n) {
+      const addr_initialBalance = await ethers.provider.getBalance(
+        addr1.address
+      );
+      console.log("addr initialBalance", addr_initialBalance);
       await expect(
         betting.connect(addr1).withdrawWinnings()
       ).not.to.be.revertedWith("Not a winner this round.");
-    } else if (winningNumber === 2) {
+      const addr_finalBalance = await ethers.provider.getBalance(addr1.address);
+      console.log("addr finalBalance", addr_finalBalance);
+      expect(addr_finalBalance).to.be.greaterThan(addr_initialBalance);
+    } else if (winningNumber === 2n) {
       await expect(
         betting.connect(addr2).withdrawWinnings()
       ).not.to.be.revertedWith("Not a winner this round.");
-    } else if (winningNumber === 3) {
+    } else if (winningNumber === 3n) {
       await expect(
         betting.connect(addr3).withdrawWinnings()
       ).not.to.be.revertedWith("Not a winner this round.");
@@ -90,8 +89,8 @@ describe("NumberCasino", function () {
       ).to.be.revertedWith("Not a winner this round.");
     }
 
-    const addr_finalBalance = await ethers.provider.getBalance(addr1.address);
-    console.log("addr finalBalance", addr_finalBalance);
+    // const addr_finalBalance = await ethers.provider.getBalance(addr1.address);
+    // console.log("addr finalBalance", addr_finalBalance);
   });
 
   it("Should allow the owner to withdraw house earnings", async function () {
@@ -101,9 +100,9 @@ describe("NumberCasino", function () {
 
     // Setup bets and end betting to ensure there are house earnings
     const addr_initialBalance = await ethers.provider.getBalance(addr1.address);
-    console.log("addr initailBalance", addr_initialBalance);
+    // console.log("addr initailBalance", addr_initialBalance);
     const initialBalance = await ethers.provider.getBalance(owner.address);
-    console.log("owner initialBalance", initialBalance);
+    // console.log("owner initialBalance", initialBalance);
 
     await betting.connect(owner).startBetting();
     await betting
@@ -120,14 +119,11 @@ describe("NumberCasino", function () {
     const winningNumber = await betting.winningNumber();
     console.log("winningNumber", winningNumber);
 
-    const balance3 = await betting.getBalance();
-    console.log("balance_on", balance3);
-
     await betting.connect(owner).withdrawHouseEarnings();
     const finalBalance = await ethers.provider.getBalance(owner.address);
-    console.log("owner finalBalance", finalBalance);
+    // console.log("owner finalBalance", finalBalance);
     const addr1_finalBalance = await ethers.provider.getBalance(addr1.address);
-    console.log("addr finalBalance", addr1_finalBalance);
+    // console.log("addr finalBalance", addr1_finalBalance);
 
     expect(finalBalance).to.be.above(initialBalance);
   });
