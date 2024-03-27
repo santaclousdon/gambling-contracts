@@ -4,13 +4,13 @@ const {
   loadFixture,
 } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 
-describe("NumberCasino", function () {
-  let NumberCasino, betting, owner, addr1, addr2, addr3, addrs;
+describe("Gambling", function () {
+  let Gambling, betting, owner, addr1, addr2, addr3, addrs;
 
   async function deployTokenFixture() {
-    NumberCasino = await ethers.getContractFactory("NumberCasino");
+    Gambling = await ethers.getContractFactory("Gambling");
     [owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners();
-    betting = await NumberCasino.deploy();
+    betting = await Gambling.deploy();
     // const initialBalance = await ethers.provider.getBalance(addr1.address);
     // console.log(initialBalance);
     return { betting, owner, addr1, addr2, addr3, ...addrs };

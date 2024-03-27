@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract NumberCasino {
+contract Gambling {
     address public owner;
     bool public bettingActive = false;
     mapping(uint256 => uint256) public numberToTotalBet; // Maps number to total ETH bet on it
