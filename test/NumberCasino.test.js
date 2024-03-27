@@ -68,7 +68,8 @@ describe("NumberCasino", function () {
       ).not.to.be.revertedWith("Not a winner this round.");
       const addr_finalBalance = await ethers.provider.getBalance(addr1.address);
       console.log("addr finalBalance", addr_finalBalance);
-      expect(addr_finalBalance).to.be.greaterThan(addr_initialBalance);
+      expect(addr_finalBalance).to.be.above(addr_initialBalance);
+      // expect(addr_initialBalance).to.be.above(addr_finalBalance);
     } else if (winningNumber === 2n) {
       await expect(
         betting.connect(addr2).withdrawWinnings()
@@ -97,12 +98,13 @@ describe("NumberCasino", function () {
     const { betting, owner, addr1, addr2, addr3 } = await loadFixture(
       deployTokenFixture
     );
-
+    const winningNumber = await betting.winningNumber();
+    console.log("winningNumber", winningNumber);
     // Setup bets and end betting to ensure there are house earnings
-    const addr_initialBalance = await ethers.provider.getBalance(addr1.address);
-    // console.log("addr initailBalance", addr_initialBalance);
-    const initialBalance = await ethers.provider.getBalance(owner.address);
-    // console.log("owner initialBalance", initialBalance);
+    const owner_initialBalance = await ethers.provider.getBalance(
+      owner.address
+    );
+    console.log("owner initialBalance", owner_initialBalance);
 
     await betting.connect(owner).startBetting();
     await betting
@@ -116,16 +118,13 @@ describe("NumberCasino", function () {
       .placeBet(3, { value: ethers.parseEther("300.0") });
     await betting.connect(owner).endBetting();
 
-    const winningNumber = await betting.winningNumber();
-    console.log("winningNumber", winningNumber);
-
     await betting.connect(owner).withdrawHouseEarnings();
-    const finalBalance = await ethers.provider.getBalance(owner.address);
-    // console.log("owner finalBalance", finalBalance);
+    const owner_finalBalance = await ethers.provider.getBalance(owner.address);
+    console.log("owner finalBalance", owner_finalBalance);
     const addr1_finalBalance = await ethers.provider.getBalance(addr1.address);
     // console.log("addr finalBalance", addr1_finalBalance);
 
-    expect(finalBalance).to.be.above(initialBalance);
+    expect(owner_finalBalance).to.be.above(owner_initialBalance);
   });
 
   it("Should not allow non-owners to start/end betting or withdraw house earnings", async function () {
